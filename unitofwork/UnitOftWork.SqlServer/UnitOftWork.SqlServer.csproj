@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\common\Common\Common.csproj" />
+    <ProjectReference Include="..\..\repository\Repository.SqlServer\Repository.SqlServer.csproj" />
     <ProjectReference Include="..\UnitOfWork.Interfaces\UnitOfWork.Interfaces.csproj" />
   </ItemGroup>
 

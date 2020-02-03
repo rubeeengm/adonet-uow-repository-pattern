@@ -4,4 +4,34 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="obj\Debug\netcoreapp3.0\Common.AssemblyInfo.cs" />
+    <Compile Include="obj\Release\netcoreapp3.0\Common.AssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="bin\Debug\netcoreapp3.0\Common.deps.json" />
+    <Content Include="obj\Common.csproj.nuget.dgspec.json" />
+    <Content Include="obj\Debug\netcoreapp3.0\Common.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\project.assets.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Debug\netcoreapp3.0\Common.dll" />
+    <None Include="bin\Debug\netcoreapp3.0\Common.pdb" />
+    <None Include="obj\Common.csproj.nuget.cache" />
+    <None Include="obj\Common.csproj.nuget.g.props" />
+    <None Include="obj\Common.csproj.nuget.g.targets" />
+    <None Include="obj\Debug\netcoreapp3.0\Common.AssemblyInfoInputs.cache" />
+    <None Include="obj\Debug\netcoreapp3.0\Common.assets.cache" />
+    <None Include="obj\Debug\netcoreapp3.0\Common.dll" />
+    <None Include="obj\Debug\netcoreapp3.0\Common.pdb" />
+    <None Include="obj\Release\netcoreapp3.0\Common.AssemblyInfoInputs.cache" />
+    <None Include="obj\Release\netcoreapp3.0\Common.assets.cache" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="bin\Release\netcoreapp3.0\" />
+  </ItemGroup>
+
 </Project>
