@@ -5,10 +5,15 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Transactions;
+using UnitOfWork.Interfaces;
 
 namespace Services {
 	public class InvoiceService {
+		private IUnitOfWork _unitOfWork;
 
+		public InvoiceService(IUnitOfWork unitOfWork) {
+			_unitOfWork = unitOfWork;
+		}
 		public void create(Invoice model) {
 			prepareOrder(model);
 
@@ -28,68 +33,42 @@ namespace Services {
 		}
 
 		public Invoice get(int id) {
-			var result = new Invoice();
+			using (var context = _unitOfWork.create()) {
+				var result = context.repositories.invoiceRepository.get(id);
 
-			using (var context = new SqlConnection(Parameters.connectionString)) {
-				context.Open();
+				result.client = 
+					context.repositories.clientRepository.get(result.clientId);
+				result.detail = 
+					context.repositories.invoiceDetailRepository.getAllByInvoiceId(result.id);
 
-				var command = new SqlCommand("SELECT * FROM INVOICES WHERE ID = @ID", context);
-				command.Parameters.AddWithValue("@ID", id);
-
-				using (var reader = command.ExecuteReader()) {
-					reader.Read();
-
-					result.id = Convert.ToInt32(reader["ID"]);
-					result.iva = Convert.ToDecimal(reader["IVA"]);
-					result.subTotal = Convert.ToDecimal(reader["SUBTOTAL"]);
-					result.total = Convert.ToDecimal(reader["TOTAL"]);
-					result.clientId = Convert.ToInt32(reader["CLIENTID"]);
+				foreach (var item in result.detail) {
+					item.product = 
+						context.repositories.productRepository.get(item.productId);
 				}
 
-				//Client
-				setClient(result, context);
-
-				//Detail
-				setDetail(result, context);
+				return result;
 			}
-
-			return result;
 		}
+		public IEnumerable<Invoice> getAll() {
+			using (var context = _unitOfWork.create()) {
+				var records = context.repositories.invoiceRepository.getAll();
 
-		public List<Invoice> getAll() {
-			var result = new List<Invoice>();
+				foreach (var record in records) {
+					record.client = context.repositories
+										.clientRepository.get(record.clientId);
+					record.detail = context.repositories.invoiceDetailRepository
+										.getAllByInvoiceId(record.id);
 
-			using (var context = new SqlConnection(Parameters.connectionString)) {
-				//abre la conexion
-				context.Open();
-
-				var command = new SqlCommand("SELECT * FROM INVOICES", context);
-
-				using (var reader = command.ExecuteReader()) {
-					while (reader.Read()) {
-						var invoice = new Invoice {
-							id = Convert.ToInt32(reader["id"])
-							, iva = Convert.ToDecimal(reader["iva"])
-							, subTotal = Convert.ToDecimal(reader["subtotal"])
-							, total = Convert.ToDecimal(reader["total"])
-							, clientId = Convert.ToInt32(reader["clientId"])
-						};
-
-						result.Add(invoice);
+					foreach (var item in record.detail) {
+						item.product = 
+							context.repositories.productRepository.get(
+								item.productId
+							);
 					}
 				}
-
-				//set aditional properties
-				foreach (var invoice in result) {
-					//client
-					setClient(invoice, context);
-
-					//detail
-					setDetail(invoice, context);
-				}
+				
+				return records;
 			}
-
-			return result;
 		}
 
 		public void update(Invoice model) {
@@ -217,7 +196,7 @@ namespace Services {
 
 			using (var reader = command.ExecuteReader()) {
 				while (reader.Read()) {
-					invoice.detail.Add(new InvoiceDetail {
+					/*invoice.detail.Add(new InvoiceDetail {
 						id = Convert.ToInt32(reader["ID"])
 						, productId = Convert.ToInt32(reader["PRODUCTID"])
 						, quantity = Convert.ToInt32(reader["QUANTITY"])
@@ -225,7 +204,7 @@ namespace Services {
 						, subTotal = Convert.ToDecimal(reader["SUBTOTAL"])
 						, total = Convert.ToDecimal(reader["TOTAL"])
 						, invoice = invoice
-					});
+					});*/
 				}
 			}
 

@@ -8,7 +8,7 @@ namespace Models {
 		public decimal total { get; set; }
 		public int clientId { get; set; }
 		public Client client { get; set; }
-		public List<InvoiceDetail> detail { get; set; }
+		public IEnumerable<InvoiceDetail> detail { get; set; }
 
 		public Invoice() {
 			detail = new List<InvoiceDetail>();
